@@ -1,0 +1,8 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import your custom styles */
+@import './styles/globals.css';
+@import './styles/animations.css';
