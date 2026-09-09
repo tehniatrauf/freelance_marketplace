@@ -1,10 +1,25 @@
 // backend/src/config/database.js
 const { Sequelize } = require('sequelize');
 
-// Use DATABASE_URL from Railway
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+// Get database URL from environment
+const databaseUrl = process.env.DATABASE_URL || process.env.DB_URL;
+
+if (!databaseUrl) {
+  console.error('❌ DATABASE_URL is not defined in environment variables');
+  process.exit(1);
+}
+
+console.log('🔄 Connecting to PostgreSQL...');
+
+const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
   logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  },
   pool: {
     max: 5,
     min: 0,

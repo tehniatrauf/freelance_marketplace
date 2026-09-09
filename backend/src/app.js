@@ -11,12 +11,6 @@ const errorHandler = require('./middleware/errorHandler');
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const jobRoutes = require('./routes/jobRoutes');
-const applicationRoutes = require('./routes/applicationRoutes');
-const projectRoutes = require('./routes/projectRoutes');
-const messageRoutes = require('./routes/messageRoutes');
-const reviewRoutes = require('./routes/reviewRoutes');
 
 // Connect to database
 connectDB();
@@ -43,17 +37,8 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Static files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/jobs', jobRoutes);
-app.use('/api/applications', applicationRoutes);
-app.use('/api/projects', projectRoutes);
-app.use('/api/messages', messageRoutes);
-app.use('/api/reviews', reviewRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -65,6 +50,9 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Error handler
+app.use(errorHandler);
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({
@@ -72,8 +60,5 @@ app.use((req, res) => {
     message: 'Route not found'
   });
 });
-
-// Error handler
-app.use(errorHandler);
 
 module.exports = app;
