@@ -1,39 +1,41 @@
-// src/models/Category.js
-const mongoose = require('mongoose');
 
-const categorySchema = new mongoose.Schema({
+// backend/src/models/Category.js
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/database');
+
+const Category = sequelize.define('Category', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
   name: {
-    type: String,
-    required: [true, 'Please add a category name'],
-    unique: true,
-    trim: true
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
   },
   description: {
-    type: String,
-    trim: true
+    type: DataTypes.TEXT,
+    allowNull: true
   },
   icon: {
-    type: String
+    type: DataTypes.STRING,
+    allowNull: true
   },
   color: {
-    type: String,
-    default: '#3B82F6'
+    type: DataTypes.STRING,
+    defaultValue: '#3B82F6'
   },
   status: {
-    type: String,
-    enum: ['active', 'inactive'],
-    default: 'active'
+    type: DataTypes.ENUM('active', 'inactive'),
+    defaultValue: 'active'
   },
   jobCount: {
-    type: Number,
-    default: 0
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
+    type: DataTypes.INTEGER,
+    defaultValue: 0
   }
 }, {
   timestamps: true
 });
 
-module.exports = mongoose.model('Category', categorySchema);
+module.exports = Category;
