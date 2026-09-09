@@ -1,5 +1,5 @@
 // backend/src/controllers/authController.js
-const User = require('../models/User');
+const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => {
@@ -12,7 +12,7 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, role, phone, location } = req.body;
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -39,11 +39,10 @@ exports.register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        avatar: user.avatar || 'default-avatar.png'
+        avatar: user.avatar
       }
     });
   } catch (error) {
-    console.error('Registration error:', error);
     res.status(500).json({
       success: false,
       message: error.message
@@ -62,7 +61,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user = await User.matchPassword(email, password);
+    const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -70,7 +69,15 @@ exports.login = async (req, res) => {
       });
     }
 
-    if (user.is_active === 'N') {
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
+    }
+
+    if (!user.isActive) {
       return res.status(403).json({
         success: false,
         message: 'Your account has been deactivated'
@@ -88,11 +95,10 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
         avatar: user.avatar,
-        isVerified: user.is_verified === 'Y'
+        isVerified: user.isVerified
       }
     });
   } catch (error) {
-    console.error('Login error:', error);
     res.status(500).json({
       success: false,
       message: error.message
@@ -102,19 +108,12 @@ exports.login = async (req, res) => {
 
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
+    const user = await User.findByPk(req.user.id);
     res.status(200).json({
       success: true,
       user
     });
   } catch (error) {
-    console.error('GetMe error:', error);
     res.status(500).json({
       success: false,
       message: error.message
