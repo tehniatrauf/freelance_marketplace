@@ -8,10 +8,14 @@ const generateToken = (id) => {
   });
 };
 
+// @desc    Register user
+// @route   POST /api/auth/register
+// @access  Public
 exports.register = async (req, res) => {
   try {
     const { name, email, password, role, phone, location } = req.body;
 
+    // Check if user exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({
@@ -20,6 +24,7 @@ exports.register = async (req, res) => {
       });
     }
 
+    // Create user
     const user = await User.create({
       name,
       email,
@@ -43,6 +48,7 @@ exports.register = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(500).json({
       success: false,
       message: error.message
@@ -50,6 +56,9 @@ exports.register = async (req, res) => {
   }
 };
 
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -99,6 +108,7 @@ exports.login = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({
       success: false,
       message: error.message
@@ -106,14 +116,24 @@ exports.login = async (req, res) => {
   }
 };
 
+// @desc    Get current user
+// @route   GET /api/auth/me
+// @access  Private
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
     res.status(200).json({
       success: true,
       user
     });
   } catch (error) {
+    console.error('GetMe error:', error);
     res.status(500).json({
       success: false,
       message: error.message

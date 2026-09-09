@@ -11,7 +11,6 @@ if (!databaseUrl) {
 }
 
 console.log('🔄 Connecting to PostgreSQL...');
-console.log(`📡 Using database: ${databaseUrl.replace(/:[^:]*@/, ':****@')}`);
 
 const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
