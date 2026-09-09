@@ -6,7 +6,7 @@ const Project = require('./Project');
 const Message = require('./Message');
 const Review = require('./Review');
 const Category = require('./Category');
-const Portfolio = require('./Portfolio');
+const Portfolio = require('./portfolio');
 
 module.exports = {
   User,
