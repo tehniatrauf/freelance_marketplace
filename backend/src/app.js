@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const path = require('path');
 require('dotenv').config();
 
 const { connectDB } = require('./config/database');
@@ -12,7 +11,7 @@ const errorHandler = require('./middleware/errorHandler');
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 
-// Connect to database
+// Connect to database FIRST
 connectDB();
 
 const app = express();
@@ -45,13 +44,9 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Server is running',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    timestamp: new Date().toISOString()
   });
 });
-
-// Error handler
-app.use(errorHandler);
 
 // 404 handler
 app.use((req, res) => {
@@ -60,5 +55,8 @@ app.use((req, res) => {
     message: 'Route not found'
   });
 });
+
+// Error handler
+app.use(errorHandler);
 
 module.exports = app;

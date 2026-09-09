@@ -2,14 +2,16 @@
 const { Sequelize } = require('sequelize');
 
 // Get database URL from environment
-const databaseUrl = process.env.DATABASE_URL || process.env.DB_URL;
+const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
   console.error('❌ DATABASE_URL is not defined in environment variables');
+  console.error('Please add DATABASE_URL to your environment variables');
   process.exit(1);
 }
 
 console.log('🔄 Connecting to PostgreSQL...');
+console.log(`📡 Using database: ${databaseUrl.replace(/:[^:]*@/, ':****@')}`);
 
 const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
