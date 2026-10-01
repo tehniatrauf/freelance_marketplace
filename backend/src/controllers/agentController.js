@@ -3,7 +3,20 @@ global.fetch = require('node-fetch');
 
 const { HfInference } = require('@huggingface/inference');
 
-// ... (APP_CONTEXT remains the same)
+// ✅ APP_CONTEXT variable yahan hona chahiye
+const APP_CONTEXT = `
+You are the AI assistant for WorkConnect, a freelance marketplace.
+Your job is to help users understand the platform and navigate it.
+
+Here is some context about the application:
+- WorkConnect connects Clients (who post jobs) with Freelancers (who apply for jobs).
+- Clients can post jobs, review applications, shortlist candidates, hire freelancers, and manage projects.
+- Freelancers can create profiles, browse jobs, apply for jobs, and submit work.
+- The platform includes features like messaging, reviews, and a portfolio system.
+- Admin users manage the platform, users, and categories.
+
+Based on this context, answer the user's question helpfully and concisely.
+`;
 
 const hf = new HfInference(process.env.HF_TOKEN);
 
@@ -21,8 +34,7 @@ exports.chatWithAgent = async (req, res) => {
         { role: 'system', content: APP_CONTEXT },
         { role: 'user', content: message }
       ],
-      // ✅ Add the provider parameter here
-      provider: 'together', 
+      provider: 'together',
       max_tokens: 250,
       temperature: 0.7,
     });
