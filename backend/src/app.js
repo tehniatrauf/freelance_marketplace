@@ -1,7 +1,6 @@
 // backend/src/app.js
 const express = require('express');
 const cors = require('cors');
-const agentRoutes = require('./routes/agentRoutes');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
@@ -9,13 +8,15 @@ require('dotenv').config();
 const { connectDB } = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 
-// Import routes
 const authRoutes = require('./routes/authRoutes');
+const agentRoutes = require('./routes/agentRoutes');
 
-// Connect to database FIRST
 connectDB();
 
 const app = express();
+
+// IMPORTANT: Trust proxy for Railway
+app.set('trust proxy', 1);
 
 // Security
 app.use(helmet());
@@ -23,24 +24,26 @@ app.use(helmet());
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 app.use('/api', limiter);
 
 // CORS
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  credentials: true
+  origin: '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Body parser
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/agent', agentRoutes);
 
-// Health check
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
@@ -49,16 +52,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found'
-  });
-});
-
-// Error handler
 app.use(errorHandler);
-app.use('/api/agent', agentRoutes);
 
 module.exports = app;
