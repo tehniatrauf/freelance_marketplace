@@ -1,7 +1,8 @@
 // backend/src/controllers/agentController.js
+global.fetch = require('node-fetch');
+
 const { HfInference } = require('@huggingface/inference');
 
-// Apne application ka context yahan define karein
 const APP_CONTEXT = `
 You are the AI assistant for WorkConnect, a freelance marketplace.
 Your job is to help users understand the platform and navigate it.
@@ -16,7 +17,6 @@ Here is some context about the application:
 Based on this context, answer the user's question helpfully and concisely.
 `;
 
-// Initialize Hugging Face client
 const hf = new HfInference(process.env.HF_TOKEN);
 
 exports.chatWithAgent = async (req, res) => {
@@ -27,19 +27,19 @@ exports.chatWithAgent = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Message is required' });
     }
 
-    // Hugging Face model ko call karein
-    // Yahan hum ek text-generation model use kar rahe hain
-    const response = await hf.textGeneration({
-      model: 'mistralai/Mistral-7B-Instruct-v0.2', // Aap koi bhi free model choose kar sakte hain
-      inputs: `${APP_CONTEXT}\n\nUser: ${message}\nAssistant:`,
-      parameters: {
-        max_new_tokens: 250,
-        temperature: 0.7,
-        return_full_text: false, // Sirf naya text return karega
-      },
+    // ✅ Chat Completion use karein aur ek supported model choose karein
+    const response = await hf.chatCompletion({
+      model: 'Qwen/Qwen2.5-7B-Instruct', // Yeh model free tier par available hai [citation:7]
+      messages: [
+        { role: 'system', content: APP_CONTEXT },
+        { role: 'user', content: message }
+      ],
+      max_tokens: 250,
+      temperature: 0.7,
     });
 
-    const reply = response.generated_text.trim();
+    // Response ka structure thoda different hoga
+    const reply = response.choices[0].message.content;
 
     res.status(200).json({
       success: true,
