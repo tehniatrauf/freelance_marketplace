@@ -28,15 +28,14 @@ exports.chatWithAgent = async (req, res) => {
     }
 
     const response = await hf.chatCompletion({
-      model: 'Qwen/Qwen2.5-7B-Instruct',
-      messages: [
-        { role: 'system', content: APP_CONTEXT },
-        { role: 'user', content: message }
-      ],
-      max_tokens: 250,
-      temperature: 0.7,
-    });
-
+  model: 'meta-llama/Llama-3.1-8B-Instruct',  // <-- CHANGE ONLY THIS LINE
+  messages: [
+    { role: 'system', content: APP_CONTEXT },
+    { role: 'user', content: message }
+  ],
+  max_tokens: 250,
+  temperature: 0.7,
+});
     const reply = response.choices[0].message.content;
 
     res.status(200).json({
