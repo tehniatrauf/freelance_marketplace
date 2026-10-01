@@ -1,5 +1,6 @@
 // src/App.jsx
 import React from 'react';
+import AgentChat from './components/agent/AgentChat';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AnimatePresence } from 'framer-motion';
@@ -136,7 +137,12 @@ function App() {
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </AnimatePresence>
+              
               <Footer />
+              
+              {/* AI Agent Chat Widget - ADDED HERE */}
+              <AgentChat />
+              
               <Toaster 
                 position="top-right"
                 toastOptions={{

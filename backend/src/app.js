@@ -1,6 +1,7 @@
 // backend/src/app.js
 const express = require('express');
 const cors = require('cors');
+const agentRoutes = require('./routes/agentRoutes');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
@@ -58,5 +59,6 @@ app.use((req, res) => {
 
 // Error handler
 app.use(errorHandler);
+app.use('/api/agent', agentRoutes);
 
 module.exports = app;
