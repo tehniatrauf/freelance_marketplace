@@ -28,7 +28,7 @@ exports.chatWithAgent = async (req, res) => {
     }
 
     const response = await hf.chatCompletion({
-      model: 'Qwen/Qwen2.5-7B-Instruct',  // ✅ Provider suffix hata dein
+      model: 'Qwen/Qwen2.5-7B-Instruct',
       messages: [
         { role: 'system', content: APP_CONTEXT },
         { role: 'user', content: message }
