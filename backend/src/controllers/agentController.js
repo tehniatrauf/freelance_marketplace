@@ -26,17 +26,18 @@ exports.chatWithAgent = async (req, res) => {
     if (!message) {
       return res.status(400).json({ success: false, message: 'Message is required' });
     }
-
     const response = await hf.chatCompletion({
-      model: 'Qwen/Qwen2.5-7B-Instruct-Turbo', // ✅ Model name update karein
-      messages: [
-        { role: 'system', content: APP_CONTEXT },
-        { role: 'user', content: message }
-      ],
-      provider: 'together',
-      max_tokens: 250,
-      temperature: 0.7,
-    });
+  model: 'Qwen/Qwen2.5-7B-Instruct:together', // ✅ Sahi tareeqa
+  messages: [
+    { role: 'system', content: APP_CONTEXT },
+    { role: 'user', content: message }
+  ],
+  max_tokens: 250,
+  temperature: 0.7,
+});
+
+    
+    
 
     const reply = response.choices[0].message.content;
 
