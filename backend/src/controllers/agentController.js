@@ -3,7 +3,6 @@ global.fetch = require('node-fetch');
 
 const { HfInference } = require('@huggingface/inference');
 
-// ✅ APP_CONTEXT variable yahan hona chahiye
 const APP_CONTEXT = `
 You are the AI assistant for WorkConnect, a freelance marketplace.
 Your job is to help users understand the platform and navigate it.
@@ -29,7 +28,7 @@ exports.chatWithAgent = async (req, res) => {
     }
 
     const response = await hf.chatCompletion({
-      model: 'Qwen/Qwen2.5-7B-Instruct',
+      model: 'Qwen/Qwen2.5-7B-Instruct-Turbo', // ✅ Model name update karein
       messages: [
         { role: 'system', content: APP_CONTEXT },
         { role: 'user', content: message }
